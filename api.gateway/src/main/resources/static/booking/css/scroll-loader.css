@@ -1,0 +1,75 @@
+.infinite-scroll-status {
+    width: 100%;
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--muted, #64748b);
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80px;
+}
+
+.scroll-loader, 
+.scroll-error, 
+.scroll-end {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+
+.scroll-loader.hidden, 
+.scroll-error.hidden, 
+.scroll-end.hidden {
+    display: none !important; 
+}
+
+
+.spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e2e8f0;
+    border-top: 3px solid var(--accent, #3b82f6);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.scroll-error {
+    color: #ef4444;
+}
+
+
+.retry-btn {
+    margin-top: 10px;
+    padding: 8px 20px;
+    border-radius: 6px;
+    border: 1px solid var(--border, #cbd5e1);
+    background: white;
+    cursor: pointer;
+    font-weight: 600;
+    color: #334155;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.retry-btn:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+}
+
+
+.scroll-end p {
+    font-weight: 500;
+    background: #f8fafc;
+    padding: 10px 20px;
+    border-radius: 8px;
+    display: inline-block;
+    margin: 0;
+    border: 1px solid var(--border, #e2e8f0);
+}

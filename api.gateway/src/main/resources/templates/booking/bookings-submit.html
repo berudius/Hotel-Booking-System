@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Підтвердження бронювання - Edemium</title>
+
+    <link rel="stylesheet" th:href="@{common/css/header.css}">
+    <link rel="stylesheet" th:href="@{common/css/login-overlay.css}">
+    <link rel="stylesheet" th:href="@{booking/css/booking-submit.css}">
+    <link rel="stylesheet" th:href="@{booking/css/cart.css}">
+
+
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+
+<body>
+    <div th:replace="~{common/header.html :: change-phone-modal-container}"></div>
+    <header th:replace="~{common/header.html :: header}"></header>
+
+    <main class="container">
+        <div class="spacer"></div>
+        <h1>Підтвердження бронювання</h1>
+
+        <div class="card">
+            <h2>Деталі кошика</h2>
+
+            <div class="booking-summary">
+                <table class="room-list-table" id="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Послуга</th>
+                            <th>Деталі (Заїзд - Виїзд)</th>
+                            <th class="text-right">Вартість послуги</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-items-body"></tbody>
+                </table>
+
+                <div id="empty-cart-container" class="empty-cart-message hidden">
+                    <h3>Ваш кошик порожній</h3>
+                    <p>Перейдіть до розділу номерів або послуг, щоб додати їх до кошика.</p>
+                    <a th:href="@{rooms}" class="cta cta-inline">Переглянути номери</a>
+                </div>
+
+                <div class="total-row" id="total-price-container">
+                    <span>Загальна вартість:</span>
+                    <span id="total-price-value">0.00 UAH</span>
+                </div>
+            </div>
+
+            <div class="terms-box">
+                <h4>
+                    <svg class="terms-icon" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    Правила бронювання та скасування
+                </h4>
+
+                <ul class="terms-list">
+
+                    <li>Для гарантії бронювання необхідно прибути в готель або внести передплату <strong>не пізніше ніж за 1 годину</strong> до вказаного часу заїзду/початку спа-сеансу.</li>
+
+                    <li>Номери бронюються щонайменше на 1 добу.</li>
+
+                    <li>
+
+                    <strong>Як розраховується проживання:</strong>
+                    вартість номера нараховується за кожну повну добу бронювання.
+                    Якщо бронювання додатково містить неповну добу(наприклад 3 дні та 12 годин): 
+                    у сумі до 12 годин — додається 50% вартості доби,
+                    понад 12 годин — додається 100% вартості доби.</li>
+                    <li>У разі неприбуття до вказаного часу, бронювання автоматично анулюється системою.</li>
+                </ul>
+            </div>
+
+            <form id="booking-form">
+
+                <div class="form-group mt-24">
+                    <label class="form-title">Контактні дані</label>
+
+                    <div sec:authorize="isAuthenticated()">
+
+                        <div class="saved-phone-display">
+                            <div>
+                                <div class="phone-label">Ваш основний номер:</div>
+                                <strong class="phone-value"
+                                    th:text="${#authentication.principal.phoneNumber}">+380...</strong>
+
+                                <input type="hidden" id="saved_phone_number"
+                                    th:value="${#authentication.principal.phoneNumber}">
+                            </div>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="use_alt_phone">
+                            <label for="use_alt_phone">Вказати інший номер для цього бронювання</label>
+                        </div>
+
+                        <div id="alt_phone_container" class="alt-phone-section">
+                            <label for="alt_phone_number" class="small-label">Введіть новий номер:</label>
+                            <input type="tel" id="alt_phone_number" placeholder="+380..." class="mb-8">
+                        </div>
+
+                    </div>
+
+                    <div sec:authorize="!isAuthenticated()">
+                        <input type="tel" id="guest_phone_number" placeholder="Введіть ваш номер телефону (+380...)"
+                            required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-title">Коментар до бронювання</label>
+                    <textarea id="clientComment" rows="3"
+                        placeholder="Особливі побажання, уточнення тощо..."></textarea>
+                </div>
+
+                <label class="agreement-label">
+                    <input type="checkbox" required>
+                    <span>Я підтверджую, що ознайомився з правилами готелю та умовами бронювання.</span>
+                </label>
+
+                <button type="submit" class="cta" id="submit-btn">
+                    Підтвердити та забронювати
+                </button>
+
+            </form>
+        </div>
+    </main>
+
+    <footer th:replace="~{common/footer.html :: footer}"></footer>
+    <div th:replace="~{common/login-overlay.html :: login-overlay}"></div>
+
+    <script th:src="@{common/js/header.js}"></script>
+    <script th:src="@{booking/js/bookings-submit.js}"></script>
+    <script sec:authorize="! isAuthenticated()" th:src="@{common/js/login-overlay.js}"></script>
+
+</body>
+</html>

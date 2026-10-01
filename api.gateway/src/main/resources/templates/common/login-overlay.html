@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<div th:fragment="login-overlay" sec:authorize=" ! isAuthenticated()" th:classappend="${ showLoginOverlay ?: false} ? '' : 'hidden'" id="login-overlay" class="modal">
+    <div>
+        <h2 th:text="${overlayMessage ?: 'Щоб продовжити, будь ласка, авторизуйтеся'}"></h2>
+        <a class="login-overlay-auth-link" th:href="@{auth}">Авторизуватися</a>
+        <a th:href="@{home}">На головну</a>
+    </div>
+</div>
+
+</html>

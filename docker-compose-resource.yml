@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  demo-resource-service:
+    build:
+      context: .
+      dockerfile: demo-resource-service/Dockerfile
+    container_name: demo-resource-service
+    restart: on-failure
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/java_hotel_booking_resource_service_db?useSSL=false&serverTimezone=UTC
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - DATA_BASE_PASSWORD=${DATA_BASE_PASSWORD}
+    # networks:
+    #   - edemium-network
+
+# networks:
+#   edemium-network:
+#     external: true
+#     name: edemium-network

@@ -1,0 +1,120 @@
+version: '3.8'
+
+services:
+  
+  mysql-db:
+    image: mysql:8.0
+    container_name: edemium-mysql
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DATA_BASE_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # Монтуємо скрипт, який створить 3 бази даних при першому запуску
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - edemium-network
+
+  redis-cache:
+    image: redis:7-alpine
+    container_name: edemium-redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    networks:
+      - edemium-network
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: api.gateway/Dockerfile
+    container_name: api-gateway
+    restart: on-failure
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/persistent_login_db?useSSL=false&serverTimezone=UTC
+      - SPRING_DATA_REDIS_HOST=redis-cache
+      - USER_SERVICE_URL=http://demo-user-service:8086
+      - BOOKING_SERVICE_URL=http://demo-hotel-service:8087
+      - RESOURCE_SERVICE_URL=http://demo-resource-service:8088
+
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - REMEMBER_ME_KEY=${REMEMBER_ME_KEY}
+      - DATA_BASE_PASSWORD=${DATA_BASE_PASSWORD}
+    networks:
+      - edemium-network
+    depends_on:
+      - mysql-db
+      - redis-cache
+
+  demo-hotel-service:
+    build:
+      context: .
+      dockerfile: demo-hotel-service/Dockerfile
+    container_name: demo-hotel-service
+    restart: on-failure
+
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/java_hotel_booking_service_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATA_REDIS_HOST=redis-cache
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - DATA_BASE_PASSWORD=${DATA_BASE_PASSWORD}
+      # Вказуємо змінну user.home, щоб шлях ${user.home}/hotel-uploads/ вів у папку /app/
+      - USER_HOME=/app
+    volumes:
+      # Зберігаємо картинки готелів на хості, щоб вони не зникли при перезапуску
+      - hotel_uploads:/app/hotel-uploads/
+    networks:
+      - edemium-network
+    depends_on:
+      - mysql-db
+      - redis-cache
+
+  demo-user-service:
+    build:
+      context: .
+      dockerfile: demo-user-service/Dockerfile
+    container_name: demo-user-service
+    restart: on-failure
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/java_hotel_user_service_db?useSSL=false&serverTimezone=UTC
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - DATA_BASE_PASSWORD=${DATA_BASE_PASSWORD}
+    networks:
+      - edemium-network
+    depends_on:
+      - mysql-db
+
+  demo-resource-service:
+    build:
+      context: .
+      dockerfile: demo-resource-service/Dockerfile
+    container_name: demo-resource-service
+    restart: on-failure
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/java_hotel_booking_resource_service_db?useSSL=false&serverTimezone=UTC
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - DATA_BASE_PASSWORD=${DATA_BASE_PASSWORD}
+    networks:
+      - edemium-network
+    depends_on:
+      - mysql-db
+
+networks:
+  edemium-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  redis_data:
+  hotel_uploads:
+
+  # docker compose build --no-cache
+  # compose up --force-recreate

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset='utf-8'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <link rel="stylesheet" th:href="@{auth/css/auth.css}">
+    <link rel="stylesheet" th:href="@{booking/css/cart.css}">
+    <link rel="stylesheet" th:href="@{common/css/header.css}">
+    <link rel="stylesheet" th:href="@{common/css/login-overlay.css}">
+</head>
+
+<body>
+
+    <header th:replace="~{common/header.html}"></header>
+
+    <div class="auth-form-container">
+        <div class="sign-in-form-container active">
+            <h2>Вхід</h2>
+            <form id="sign-in-form" th:action="@{sign_in}" method="post">
+                <input type="text" name="username" placeholder="Логін або номер телефону" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <span class="error-span"></span>
+                <button type="submit" class="btn-submit">Увійти</button>
+            </form>
+            <p style="display: flex; justify-content: space-between; margin-top: 15px;">
+                <span class="forgot-password-link" style="cursor: pointer; color: gray;">Забули пароль?</span>
+                <span class="registration-link" style="cursor: pointer;">Реєстрація</span>
+            </p>
+        </div>
+
+        <div class="sign-up-form-container">
+            <h2>Реєстрація</h2>
+            <form id="sign-up-form" th:action="@{sign_up}" method="post">
+                <div id="signup-step-1">
+                    <input type="text" name="login" placeholder="Логін" minlength="4" required>
+                    <input type="tel" name="phoneNumber" placeholder="Номер телефону (+380...)" required>
+                    <input type="password" id="reg-password" name="password" placeholder="Пароль"
+                        pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" required
+                        title="Мінімум 8 символів, літера та цифра">
+                    <input type="password" id="reg-confirm-password" placeholder="Підтвердіть пароль" required>
+
+                    <span class="error-span" id="step1-error"></span>
+                    <button type="button" id="btn-request-otp" class="btn-submit">Далі</button>
+                </div>
+
+                <div id="signup-step-2" style="display: none;">
+                    <p style="margin-top: 0;">Код відправлено на: <br><strong id="display-phone"></strong></p>
+                    <input type="text" name="otpCode" placeholder="Введіть 6-значний код" maxlength="6">
+                    <span class="error-span" id="step2-error"></span>
+                    <button type="submit" class="btn-submit">Зареєструватися</button>
+                    <button type="button" id="btn-resend-otp" class="btn-back" style="margin-top: 10px;">Відправити код ще раз</button>
+                </div>
+            </form>
+            <p><span class="login-link" style="cursor: pointer;">Вхід</span></p>
+        </div>
+
+        <div class="forgot-password-form-container" style="display: none;">
+            <h2>Скидання пароля</h2>
+            <form id="forgot-password-form">
+                <div id="forgot-step-1">
+                    <p style="margin-bottom: 15px; font-size: 14px;">Введіть номер телефону, прив'язаний до акаунта.</p>
+                    <input type="tel" id="forgot-phone" name="phoneNumber" placeholder="Номер телефону (+380...)"
+                        required>
+                    <span class="error-span" id="forgot-step1-error"></span>
+                    <button type="button" id="btn-request-forgot-otp" class="btn-submit">Отримати код</button>
+                </div>
+
+                <div id="forgot-step-2" style="display: none;">
+                    <p style="margin-top: 0;">Код відправлено на: <br><strong id="forgot-display-phone"></strong></p>
+                    <input type="text" name="otpCode" placeholder="Введіть 6-значний код" maxlength="6">
+                    <input type="password" id="forgot-password" name="newPassword" placeholder="Новий пароль"
+                        pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" required>
+                    <input type="password" id="forgot-confirm-password" placeholder="Підтвердіть новий пароль" required>
+
+                    <span class="error-span" id="forgot-step2-error"></span>
+                    <button type="submit" class="btn-submit">Змінити пароль</button>
+                    <button type="button" id="btn-resend-forgot-otp" class="btn-back"
+                        style="margin-top: 10px;">Відправити код ще раз</button>
+                </div>
+            </form>
+            <p><span class="login-link-from-forgot" style="cursor: pointer;">Повернутися до входу</span></p>
+        </div>
+    </div>
+
+    <div th:replace="~{common/login-overlay.html :: login-overlay}"></div>
+    <script th:src="@{auth/js/auth.js}"></script>
+    <script th:src="@{common/js/header.js}"></script>
+    <script sec:authorize="! isAuthenticated()" th:src="@{common/js/login-overlay.js}"></script>
+</body>
+
+
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Edemium</title>
+    <meta charset='utf-8'>
+    <link rel="stylesheet" th:href="@{common/css/header.css}">
+    <link rel="stylesheet" th:href="@{booking/css/home.css}">
+    <link rel="stylesheet" th:href="@{common/css/login-overlay.css}">
+    <link rel="stylesheet" th:href="@{booking/css/cart.css}">
+
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+
+<body>
+    <div th:replace="~{common/header.html :: change-phone-modal-container}"></div>
+    <header th:replace="~{common/header.html :: header}"></header>
+    <main class="container">
+        <section class="hero-card">
+            <h1>Вітаємо в Edemium</h1>
+            <p>Ваш комфорт — наша турбота. Знаходьте та забронюйте номери та послуги за лічені хвилини за допомогою
+                нашого цифрового сервісу.</p>
+            <a th:href="@{rooms}" class="cta">Переглянути номери</a>
+        </section>
+
+        <h2 class="section-title">Чому Edemium?</h2>
+        <section class="features-grid">
+            <div class="card feature-card">
+                <h3>Ексклюзивні номери</h3>
+                <p>Тільки перевірені апартаменти з реальними фото та повним описом зручностей.</p>
+            </div>
+            <div class="card feature-card">
+                <h3>Цифровий сервіс</h3>
+                <p>Керуйте бронюванням, замовляйте послуги та отримуйте підтримку онлайн.</p>
+            </div>
+            <div class="card feature-card">
+                <h3>Надійне оформлення</h3>
+                <p>Бронювання через наш сервіс гарантує збереження обраної послуги за вами.</p>
+            </div>
+        </section>
+
+        <h2 class="section-title">Наші найкращі номери</h2>
+        <div class="room-grid">
+            <div class="card room-card" data-service-id="35" data-hidden="false">
+                <div class="room-image-container js-loaded">
+                    <img class="room-slide-image active" data-id="77"
+                        src="/common/images/67ee4d17-5831-4c92-a27d-781f26518503.jpg" alt="1">
+                </div>
+                <div class="room-card-content">
+                    <div class="room-meta">
+                        <span>1000.00 / доба</span>
+                        <span>1 гостей</span>
+                    </div>
+                    <h3>Стандарт</h3>
+                    <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ex sed voluptatibus dignissimos a
+                        veniam cum praesentium, labore vel placeat minus maiores blanditiis itaque eum possimus
+                        repellendus, saepe fugit sint non.
+
+                        Earum, quos saepe, eos pariatur natus reiciendis quo ut expedita odio fugit fuga? Aliquid
+                        illo perspiciatis</p>
+                    <h4>Зручності:</h4>
+                    <div class="facilities-list">
+                        <span class="room-facility-tag">Робоче місце (стіл)</span><span
+                            class="room-facility-tag">Wi-Fi</span>
+                    </div>
+                    <div class="user-actions-container">
+                        <div class="service-quantity-controls hidden" data-service-id="35">
+                            <button class="btn-qty-minus" data-service-id="35">-</button>
+                            <span class="service-qty-value" data-service-id="35">1</span>
+                            <button class="btn-qty-plus" data-service-id="35" data-service-type="Стандарт"
+                                data-service-price="1000.00" data-service-capacity="1">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card room-card" data-service-id="36" data-hidden="false">
+                <div class="room-image-container js-loaded">
+                    <img class="room-slide-image active" data-id="81"
+                        src="/common/images/76858ad1-8708-47b8-8382-26af1f5ce3d8.jpg" alt="1">
+                </div>
+                <div class="room-card-content">
+                    <div class="room-meta">
+                        <span>2600.00 / доба</span>
+                        <span>2 гостей</span>
+                    </div>
+                    <h3>Люкс</h3>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit repellat, quidem optio voluptas
+                        corrupti sint culpa fugit quam non. Saepe, atque ipsa optio cupiditate laudantium incidunt
+                        consectetur! Nulla, eveniet. Iste.
+
+                        Sunt quo maiores in optio illum, praesentium veniam, placeat magni non ratione quas. Tempora
+                        et ipsam, deleniti</p>
+
+                    <h4>Зручності:</h4>
+                    <div class="facilities-list">
+                        <span class="room-facility-tag">Кондиціонер</span><span
+                            class="room-facility-tag">Wi-Fi</span><span class="room-facility-tag">Міні-бар</span>
+                    </div>
+                    <div class="user-actions-container">
+                        <div class="service-quantity-controls hidden" data-service-id="36">
+                            <button class="btn-qty-minus" data-service-id="36">-</button>
+                            <span class="service-qty-value" data-service-id="36">1</span>
+                            <button class="btn-qty-plus" data-service-id="36" data-service-type="Люкс"
+                                data-service-price="2600.00" data-service-capacity="2">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card room-card" data-service-id="37" data-hidden="false">
+                <div class="room-image-container js-loaded">
+                    <img class="room-slide-image active" data-id="80"
+                        src="/common/images/a8b2f41f-74c5-46f4-8c42-c03a9d79c8ea.jpg" alt="1">
+                </div>
+                <div class="room-card-content">
+                    <div class="room-meta">
+                        <span>1800.00 / доба</span>
+                        <span>2 гостей</span>
+                    </div>
+                    <h3>Напівлюкс</h3>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam quia, consequuntur qui
+                        cupiditate iure neque excepturi, numquam harum ex labore et sapiente, provident ipsam! Sit
+                        iure animi temporibus exercitationem ea!
+                        Consectetur, inventore iure, facilis ratione earum pariatur perspiciatis officia veniam ipsa
+                    </p>
+                    <h4>Зручності:</h4>
+                    <div class="facilities-list">
+                        <span class="room-facility-tag">Кондиціонер</span><span class="room-facility-tag">"WI-Fi"</span>
+                    </div>
+                    <div class="user-actions-container">
+                        <div class="service-quantity-controls hidden" data-service-id="37">
+                            <button class="btn-qty-minus" data-service-id="37">-</button>
+                            <span class="service-qty-value" data-service-id="37">1</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="view-all-container">
+            <a th:href="@{rooms}" class="cta-secondary">Переглянути всі номери</a>
+        </div>
+
+        <div class="about-grid">
+            <section class="card">
+                <h2>Хто ми?</h2>
+                <p>Edemium — це не просто готель, а сучасна платформа, створена для вашої зручності.
+                    Ми поєднуємо гостинність з технологіями, щоб зробити ваше перебування максимально
+                    комфортним та ефективним.</p>
+                <p>Наша місія — надати гостям повний контроль над своїм відпочинком через
+                    зручний цифровий інтерфейс.</p>
+                <a th:href="@{about-us}" class="cta">Дізнатися
+                    більше</a>
+            </section>
+
+            <aside>
+                <div class="card">
+                    <h3>Швидкі посилання</h3>
+                    <ul>
+                        <li>Політика конфіденційності</li>
+                        <li>Правила користування</li>
+                        <li>FAQ</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Наші контакти</h3>
+                    <p><strong>Адреса:</strong><br>вул.
+                        Прикладівська, 10, Київ</p>
+                    <p><strong>Телефон:</strong><br>+380 44
+                        123 4567</p>
+                </div>
+            </aside>
+        </div>
+    </main>
+    <footer th:replace="~{common/footer.html :: footer}"></footer>
+    <div th:replace="~{common/login-overlay.html :: login-overlay}"></div>
+
+    <script th:src="@{common/js/header.js}"></script>
+    <script sec:authorize="! isAuthenticated()" th:src="@{common/js/login-overlay.js}"></script>
+</body>
+
+</html>

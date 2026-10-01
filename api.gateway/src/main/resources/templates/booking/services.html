@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Наші послуги | Edemium</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    
+    <link rel="stylesheet" th:href="@{/common/css/header.css}">
+    <link rel="stylesheet" th:href="@{/booking/css/services.css}">
+    <link rel="stylesheet" th:href="@{/booking/css/cart.css}">
+</head>
+<body>
+    <div th:replace="~{common/header.html :: change-phone-modal-container}"></div>
+    <header th:replace="~{common/header.html :: header}"></header>
+
+    <main class="services-main">
+        <div class="spacer"></div>
+        
+        <div class="services-selection-container">
+            <h1 class="services-title">Оберіть категорію</h1>
+            
+            <div class="services-grid">
+                <a th:href="@{rooms}" class="service-choice-card">
+                    <div class="service-image-wrapper">
+                        <img th:src="@{/booking/images/rooms-cover.jpg}" alt="Номери" class="service-img">
+                        <div class="service-overlay">
+                            <h2>Номери</h2>
+                            <p>Затишок та комфорт для вашого відпочинку</p>
+                        </div>
+                    </div>
+                </a>
+
+                <a th:href="@{spas}" class="service-choice-card">
+                    <div class="service-image-wrapper">
+                        <img th:src="@{/booking/images/spa-cover.jpg}" alt="Spa-процедури" class="service-img">
+                        <div class="service-overlay">
+                            <h2>Spa-процедури</h2>
+                            <p>Відновлення сил та догляд за тілом</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{common/footer.html :: footer}"></footer>
+
+    <script th:src="@{/common/js/header.js}"></script>
+    <script sec:authorize="! isAuthenticated()" th:src="@{common/js/login-overlay.js}"></script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<div th:fragment="bookingList(bookings)" class="general-booking-container">
+
+    <div th:if="${bookings == null or #lists.isEmpty(bookings)}" class="empty-bookings">
+        <div class="empty-icon">📂</div>
+        <p>У вас немає активних бронювань.</p>
+    </div>
+
+    <div class="booking-list">
+        <th:block th:if="${bookings != null and not #lists.isEmpty(bookings)}">
+            <div class="booking-card" th:each="booking : ${bookings}" th:data-id="${booking.id}">
+
+                <div class="booking-card-header">
+                    <div class="booking-info-primary">
+                        <span class="booking-id">#<span th:text="${booking.id}"></span></span>
+                        <span class="booking-date"
+                            th:text="${booking.orderDateTime != null ? #temporals.format(booking.orderDateTime, 'dd.MM.yyyy HH:mm') : ''}"></span>
+
+                        <span class="booking-total-price" style="font-weight: bold;">
+                            Загальна сума: <span th:text="${#aggregates.sum(booking.bookingUnits.![amount]) ?: 0}">0</span> ₴
+                        </span>
+                    </div>
+
+                    <div class="booking-info-secondary">
+                        <span class="booking-phone" th:text="${booking.phoneNumber}"></span>
+                        <span class="status-badge"
+                            th:classappend="${booking.status != null ? 'status-' + #strings.toLowerCase(booking.status) : ''}"
+                            th:text="${booking.status}" th:data-current-status="${booking.status}">
+                        </span>
+                    </div>
+
+                    <button class="btn-expand-details">Деталі ▼</button>
+                </div>
+
+                <div class="booking-card-body hidden">
+
+                    <div class="booking-actions-panel">
+
+                        <div sec:authorize="hasRole('ADMIN')" class="admin-status-control">
+                            <select class="admin-general-status-select" th:data-booking-id="${booking.id}">
+                                <option value="PENDING" th:selected="${booking.status?.name() == 'PENDING'}">PENDING
+                                </option>
+                                <option value="CONFIRMED" th:selected="${booking.status?.name() == 'CONFIRMED'}">
+                                    CONFIRMED</option>
+                                <option value="COMPLETED" th:selected="${booking.status?.name() == 'COMPLETED'}">
+                                    COMPLETED</option>
+                                <option value="REJECTED" th:selected="${booking.status?.name() == 'REJECTED'}">REJECTED
+                                </option>
+
+                                <option value="CANCELLED_BY_CLIENT"
+                                    th:selected="${booking.status?.name() == 'CANCELLED_BY_CLIENT'}"
+                                    th:disabled="${booking.status?.name() != 'CANCELLED_BY_CLIENT'}"
+                                    th:hidden="${booking.status?.name() != 'CANCELLED_BY_CLIENT'}">CANCELLED_BY_CLIENT
+                                </option>
+                                <option value="EXPIRED" th:selected="${booking.status?.name() == 'EXPIRED'}"
+                                    th:disabled="${booking.status?.name() != 'EXPIRED'}"
+                                    th:hidden="${booking.status?.name() != 'EXPIRED'}">EXPIRED</option>
+                            </select>
+                            <button class="btn-update-general-status">Оновити статус</button>
+                        </div>
+
+                        <button class="btn-add-from-cart" th:data-booking-id="${booking.id}">
+                            + Додати послуги з кошика
+                        </button>
+                    </div>
+
+                    <div class="booking-comment-box" th:if="${not #strings.isEmpty(booking.clientComment)}">
+                        <strong>Коментар:</strong> <span th:text="${booking.clientComment}"></span>
+                    </div>
+
+                    <h4 class="units-title">Послуги у цьому бронюванні:</h4>
+                    <div class="units-grid">
+
+                        <div class="unit-card" th:each="bookingUnit : ${booking.bookingUnits}"
+                            th:data-id="${bookingUnit.id}">
+
+                            <div class="unit-image-wrapper">
+                                <img th:if="${not #lists.isEmpty(bookingUnit.serviceUnit.imageRecords)}"
+                                    th:src="${bookingUnit.serviceUnit.imageRecords[0].url}" alt="Фото послуги">
+                                <div th:unless="${not #lists.isEmpty(bookingUnit.serviceUnit.imageRecords)}"
+                                    class="no-image">
+                                    Немає фото
+                                </div>
+                            </div>
+
+                            <div class="unit-info">
+                                <div th:data-service-id="${bookingUnit.serviceUnit.id}"></div>
+                                <h5 th:text="${bookingUnit.serviceUnit.h5BlockValue}"></h5>
+
+                                <div class="unit-meta-tags">
+                                    <span sec:authorize="!hasRole('ADMIN')" class="status-badge unit-status"
+                                        th:classappend="${bookingUnit.status != null ? 'status-' + #strings.toLowerCase(bookingUnit.status) : ''}"
+                                        th:text="${bookingUnit.status}"></span>
+
+                                    <select sec:authorize="hasRole('ADMIN')"
+                                        class="admin-unit-status-select status-badge unit-status"
+                                        th:classappend="${bookingUnit.status != null ? 'status-' + #strings.toLowerCase(bookingUnit.status) : ''}"
+                                        th:data-unit-id="${bookingUnit.id}">
+                                        <option value="PENDING"
+                                            th:selected="${bookingUnit.status?.name() == 'PENDING'}">PENDING</option>
+                                        <option value="CONFIRMED"
+                                            th:selected="${bookingUnit.status?.name() == 'CONFIRMED'}">CONFIRMED
+                                        </option>
+                                        <option value="COMPLETED"
+                                            th:selected="${bookingUnit.status?.name() == 'COMPLETED'}">COMPLETED
+                                        </option>
+                                        <option value="REJECTED"
+                                            th:selected="${bookingUnit.status?.name() == 'REJECTED'}">REJECTED</option>
+
+                                        <option value="CANCELLED_BY_CLIENT"
+                                            th:selected="${bookingUnit.status?.name() == 'CANCELLED_BY_CLIENT'}"
+                                            th:disabled="${bookingUnit.status?.name() != 'CANCELLED_BY_CLIENT'}"
+                                            th:hidden="${bookingUnit.status?.name() != 'CANCELLED_BY_CLIENT'}">CANCELLED
+                                        </option>
+                                        <option value="EXPIRED" th:selected="${bookingUnit.status?.name() == 'EXPIRED'}"
+                                            th:disabled="${bookingUnit.status?.name() != 'EXPIRED'}"
+                                            th:hidden="${bookingUnit.status?.name() != 'EXPIRED'}">EXPIRED</option>
+                                    </select>
+                                    <span class="unit-tag" th:text="${bookingUnit.amount} + ' ₴'"></span>
+                                    <span class="unit-tag" th:text="'Гостей: ' + ${bookingUnit.clientCount}"></span>
+
+                                    <th:block
+                                        th:if="${bookingUnit.serviceUnit.class.simpleName == 'SpaUnitDto' or bookingUnit.serviceUnit.class.simpleName == 'SpaUnit'}">
+                                        <span class="unit-tag"
+                                            th:text="'Тривалість: ' + ${bookingUnit.serviceUnit.durationInMinutes} + ' хв.'"></span>
+                                    </th:block>
+
+                                    <th:block
+                                        th:if="${(bookingUnit.class.simpleName == 'BookingSpaUnitDto' or bookingUnit.class.simpleName == 'BookingSpaUnit') and bookingUnit.preferedGender != null}">
+                                        <div class="worker-info"
+                                            style="margin-top: 8px; font-size: 0.85rem; color: #475569; width: 100%;">
+                                            <span th:if="${not #lists.isEmpty(bookingUnit.assignedWorkers)}">
+                                                <span th:each="worker, iterStat : ${bookingUnit.assignedWorkers}">
+                                                    <span
+                                                        th:text="${worker.firstName} + ' ' + ${worker.lastName} + ' (' + ${worker.gender} + ')'"></span>
+                                                    <span th:if="${!iterStat.last}">, </span>
+                                                </span>
+                                            </span>
+                                            <span
+                                                th:if="${#lists.isEmpty(bookingUnit.assignedWorkers) and bookingUnit.status?.name() != 'PENDING'}"
+                                                class="text-red-500">
+                                                Не призначено
+                                            </span>
+                                        </div>
+                                    </th:block>
+
+                                    <button
+                                        th:if="${bookingUnit.status?.name() != 'CANCELLED_BY_CLIENT' and bookingUnit.status?.name() != 'COMPLETED' and bookingUnit.status?.name() != 'REJECTED'}"
+                                        class="cta-secondary btn-cancel-unit"
+                                        style="padding: 2px 8px; font-size: 0.8rem;"
+                                        th:data-unit-id="${bookingUnit.id}">
+                                        ✖ Скасувати послугу
+                                    </button>
+                                </div>
+
+                                <div class="unit-dates">
+                                    <div><strong>Заїзд/Початок:</strong> <span
+                                            th:text="${bookingUnit.start != null ? #temporals.format(bookingUnit.start, 'dd.MM.yyyy HH:mm') : ''}"></span>
+                                    </div>
+                                    <div><strong>Виїзд/Кінець:</strong> <span
+                                            th:text="${bookingUnit.end != null ? #temporals.format(bookingUnit.end, 'dd.MM.yyyy HH:mm') : ''}"></span>
+                                    </div>
+
+                                    <button sec:authorize="hasRole('ADMIN')"
+                                        th:if="${bookingUnit.status?.name() == 'CONFIRMED'}" class="btn-edit-dates"
+                                        th:data-unit-id="${bookingUnit.id}" th:data-start="${bookingUnit.start}"
+                                        th:data-end="${bookingUnit.end}">
+                                        Змінити час
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </th:block>
+    </div>
+
+    <div class="infinite-scroll-status hidden-initially">
+        <div class="scroll-loader hidden">
+            <div class="spinner"></div>
+            <span>Завантажуємо ще бронювання...</span>
+        </div>
+        <div class="scroll-error hidden">
+            <p>Не вдалося завантажити дані.</p>
+            <button class="retry-btn">Спробувати знову</button>
+        </div>
+        <div class="scroll-end hidden">
+            <p>Ви переглянули всі бронювання.</p>
+        </div>
+    </div>
+
+</div>

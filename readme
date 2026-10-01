@@ -1,0 +1,4 @@
+
+docker-compose -f docker-compose-all-in.yml up -d - for local deployment of all containers
+
+To launch it, you must set the environment variables according to the database and the configuration of the PC where Docker is being deployed — this should have been sufficient for a local deployment in Docker Desktop.

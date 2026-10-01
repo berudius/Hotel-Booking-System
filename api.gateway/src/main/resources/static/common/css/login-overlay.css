@@ -1,0 +1,85 @@
+#login-overlay.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+#login-overlay.modal > div {
+    background: var(--card, #ffffff);
+    padding: 32px 24px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+}
+
+#login-overlay.modal h2 {
+    margin: 0 0 12px 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.4;
+}
+
+#login-overlay.modal a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#login-overlay.modal a[href*="/auth"] {
+    background: var(--accent);
+    color: white;
+    border: none;
+}
+
+#login-overlay.modal a[href*="/auth"]:hover {
+    background: var(--accent-dark);
+    transform: translateY(-1px);
+}
+
+#login-overlay.modal a[href*="/home"] {
+    background: white;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    margin-top: 4px;
+}
+
+#login-overlay.modal a[href*="/home"]:hover {
+    color: #0f172a;
+    border-color: #cbd5e1;
+    background: #f8fafc;
+}
+
+#login-overlay.modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#login-overlay.modal.hidden > div {
+    transform: translateY(-20px);
+}

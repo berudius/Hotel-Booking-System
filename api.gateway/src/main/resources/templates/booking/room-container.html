@@ -1,0 +1,53 @@
+<div th:fragment="roomCard(room)" class="card room-card" 
+    th:classappend="${room.hiddenFromClient} ? 'room-card-client-hidden' : ''"
+    th:data-service-id="${room.id}"
+    th:data-hidden="${room.hiddenFromClient}">
+
+        <div th:if="${room.hiddenFromClient}" class="admin-hidden-badge">
+            Приховано
+        </div>
+
+        <div class="room-image-container">
+            <img class="room-slide-image" th:each="img : ${room.imageRecords}" th:data-id="${img.id}"
+                th:src="${img.url}" th:alt="${img.position}">
+            <button class="slider-btn slider-btn-prev" th:if="${room.imageRecords.size() > 1}"
+                aria-label="Previous image">&lt;</button>
+            <button class="slider-btn slider-btn-next" th:if="${room.imageRecords.size() > 1}"
+                aria-label="Next image">&gt;</button>
+            <img class="room-slide-image" th:if="${room.imageRecords.size() == 0}" src="/common/images/placeholder.png" alt="">
+        </div>
+
+        <div class="room-card-content">
+            <div class="room-meta">
+                <span th:text="${room.price} + ' / доба'"></span>
+                <span th:text="${room.guestCapacity} + ' гостей'"></span>
+            </div>
+            <h3 th:text="${room.type}"></h3>
+            <p th:text="${room.description}"></p>
+            <h4>Зручності:</h4>
+            <div class="facilities-list">
+                <span class="room-facility-tag" th:each="facility : ${room.facilities}" th:text="${facility}"></span>
+            </div>
+            <div class="user-actions-container">
+                <button class="cta btn-select full-width" th:data-service-id="${room.id}"
+                    th:data-service-type="${room.type}" th:data-service-price="${room.price}"
+                    th:data-service-capacity="${room.guestCapacity}"
+                    data-class-type="ROOM"> Обрати
+                </button>
+
+                <div class="service-quantity-controls hidden" th:data-service-id="${room.id}">
+                    <button class="btn-qty-minus" th:data-service-id="${room.id}">-</button>
+                    <span class="service-qty-value" th:data-service-id="${room.id}">1</span>
+                    <button class="btn-qty-plus" th:data-service-id="${room.id}" th:data-service-type="${room.type}"
+                        th:data-service-price="${room.price}"
+                        th:data-service-capacity="${room.guestCapacity}">+</button>
+                </div>
+            </div>
+        </div>
+        
+        <div sec:authorize="hasRole('ADMIN')" class="modal-buttons-container">
+            <button class="edit-modal-opener">Редагувати</button>
+            <button class="delete-modal-opener">Видалити</button>
+        </div>
+        
+</div>

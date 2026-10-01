@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Бронювання - Edemium</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <link rel='stylesheet' type='text/css' th:href="@{/common/css/header.css}">
+    <link rel='stylesheet' type='text/css' th:href="@{/common/css/login-overlay.css}">
+    <link rel="stylesheet" th:href="@{/booking/css/cart.css}">
+    <link rel="stylesheet" th:href="@{/booking/css/bookings.css}">
+    <link rel="stylesheet" th:href="@{/booking/css/scroll-loader.css}">
+
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+
+<body>
+    <div th:replace="~{common/header.html :: change-phone-modal-container}"></div>
+    <header th:replace="~{common/header.html :: header}"></header>
+
+    <main class="bookings-main">
+        <div id="edit-dates-modal" class="post-form-container hidden">
+            <div class="form-scroll-wrapper" style="max-width: 400px;">
+                <h3>Зміна часу послуги</h3>
+                <p class="small-label mb-16">Вкажіть нові дати для підтвердженої послуги. Система автоматично
+                    перевірить, чи вільні ресурси.</p>
+
+                <form id="edit-dates-form">
+                    <input type="hidden" id="edit-dates-unit-id">
+
+                    <div class="form-group mb-16">
+                        <label style="font-weight: 600; font-size: 0.85rem; color: #475569;">Новий час початку</label>
+                        <input type="datetime-local" id="edit-start-date" required class="manual-start">
+                    </div>
+
+                    <div class="form-group mb-16">
+                        <label style="font-weight: 600; font-size: 0.85rem; color: #475569;">Новий час
+                            завершення</label>
+                        <input type="datetime-local" id="edit-end-date" required class="manual-end">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="cta" id="btn-submit-dates">Зберегти зміни</button>
+                        <button type="button" class="modal-close-btn form-closer">Скасувати</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+        <div class="bookings-layout">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h1 class="page-title" style="margin-bottom: 0;">Управління бронюваннями</h1>
+
+                <label class="archive-toggle"
+                    style="font-size: 0.85rem; color: #64748b; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                    <input type="checkbox" id="toggle-archive" style="cursor: pointer;">
+                    Показати архівні/скасовані
+                </label>
+            </div>
+
+            <div class="tabs-header">
+                <button sec:authorize="hasRole('ADMIN')" class="tab-btn active" data-target="all-bookings">
+                    Всі бронювання (Користувачі)
+                </button>
+
+                <button class="tab-btn"
+                    th:classappend="${#authorization.expression('!hasRole(''ADMIN'')')} ? 'active' : ''"
+                    data-target="my-bookings">
+                    Мої бронювання
+                </button>
+            </div>
+
+            <div class="tabs-body">
+                <div sec:authorize="hasRole('ADMIN')" id="all-bookings" class="tab-pane active">
+                    <div th:replace="~{booking/general-booking-container.html :: bookingList(${allBookings})}"></div>
+                </div>
+
+                <div id="my-bookings" class="tab-pane"
+                    th:classappend="${#authorization.expression('!hasRole(''ADMIN'')')} ? 'active' : ''">
+                    <div th:replace="~{booking/general-booking-container.html :: bookingList(${myBookings})}"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{common/footer.html :: footer}"></footer>
+    <div th:replace="~{common/login-overlay.html :: login-overlay}"></div>
+
+    <script th:src="@{/common/js/header.js}"></script>
+    <script th:src="@{/booking/js/bookings.js}"></script>
+    <script sec:authorize="! isAuthenticated()" th:src="@{common/js/login-overlay.js}"></script>
+</body>
+
+</html>

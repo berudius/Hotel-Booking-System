@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Про нас - Edemium</title>
+
+    <link rel="stylesheet" th:href="@{common/css/header.css}">
+    <link rel="stylesheet" th:href="@{common/css/about-us.css}">
+    <link rel="stylesheet" th:href="@{common/css/login-overlay.css}">
+    <link rel="stylesheet" th:href="@{booking/css/cart.css}">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+
+<body>
+    <div th:replace="~{common/header.html :: change-phone-modal-container}"></div>
+    <header th:replace="~{common/header.html :: header}"></header>
+
+    <main>
+        <div class="container">
+            <section class="title-card">
+                <h1>Edemium — простий спосіб забронювати відпочинок</h1>
+                <p>Ми зробили цей сервіс, щоб ви могли спланувати поїздку самостійно, без зайвих дзвінків та очікувань
+                    на лінії.</p>
+            </section>
+
+            <div class="grid">
+                <div>
+                    <section id="about" class="card section">
+                        <h2>Про сервіс</h2>
+                        <p>Edemium — це офіційний сайт бронювання нашої мережі. Тут ви бачите реальну наявність місць,
+                            актуальні ціни та детальний опис кожної послуги. Жодних посередників — ви взаємодієте
+                            з готелем напряму.</p>
+                    </section>
+
+                    <section class="card section">
+                        <h2>Чому це зручно?</h2>
+                        <p>Більше не потрібно телефонувати на рецепцію і питати: "А є вільний стандарт?". Просто
+                            відкрийте список послуг, оберіть дати і подивіться доступні варіанти. Ви бачите реальні фото
+                            та повний список зручностей перед тим, як натиснути кнопку "Бронювати".</p>
+                    </section>
+
+                    <section class="card section">
+                        <h2>Лояльність до гостей</h2>
+                        <p>Ми довіряємо нашим гостям. Тому зробили процес оформлення максимально простим для кожного: ваші 
+                        бронювання підтверджуються миттєво, без додаткових перевірок чи обов'язкових дзвінків 
+                        від адміністратора.
+                        </p>
+                    </section>
+
+                    <section id="services" class="card section">
+                        <h2>Можливості</h2>
+                        <p>Зручний каталог наших послуг: переглядайте фотографії, детальні описи та перелік зручностей, щоб легко обрати ідеальний варіант для вашого відпочинку.</p>
+                    </section>
+                </div>
+
+                <aside class="contacts-panel">
+                    <div class="card">
+                        <button class="contact-toggle" aria-expanded="false" id="contactToggle">
+                            Контакти &nbsp; <span aria-hidden="true">▾</span>
+                        </button>
+                        <div id="contactBody" class="contact-body" aria-hidden="true">
+                            <p class="contact-info"><strong>Адреса:</strong><br>вул. Прикладівська, 10, Київ, Україна
+                            </p>
+                            <p class="contact-info"><strong>Телефон:</strong><br>+380 44 123 4567</p>
+                            <p class="contact-info"><strong>Email:</strong><br>info@edemium.example</p>
+                            <p class="contact-info muted">Графік роботи: Пн–Нд 24/7</p>
+                        </div>
+                    </div>
+
+                    <div class="card" >
+                        <h3 >Швидкі посилання</h3>
+                        <ul class="quick-links">
+                            <li><a th:href="@{privacy}">Політика конфіденційності</a></li>
+                            <li><a th:href="@{terms}">Правила користування</a></li>
+                            <li><a th:href="@{faq}">FAQ</a></li>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{common/footer.html :: footer}"></footer>
+    <div th:replace="~{common/login-overlay.html :: login-overlay}"></div>
+
+    <script th:src="@{common/js/about-us.js}"></script>
+    <script th:src="@{common/js/header.js}"></script>
+    <script sec:authorize="! isAuthenticated()"  th:src="@{common/js/login-overlay.js}"></script>
+</body>
+
+
+
+</html>

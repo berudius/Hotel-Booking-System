@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" th:href="@{common/css/header.css}">
+    <link rel="stylesheet" th:href="@{booking/css/rooms.css}">
+    <link rel="stylesheet" th:href="@{common/css/login-overlay.css}">
+    <link rel="stylesheet" th:href="@{booking/css/cart.css}">
+    <link sec:authorize="hasRole('ADMIN')" rel="stylesheet" th:href="@{booking/css/room-form.css}">
+    <link sec:authorize="hasRole('ADMIN')" rel="stylesheet" th:href="@{booking/css/delete-modal-window.css}">
+    <link rel="stylesheet" th:href="@{booking/css/lightbox-overlay.css}">
+    <link rel="stylesheet" th:href="@{booking/css/scroll-loader.css}">
+
+
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+
+<body>
+    <div th:replace="~{common/header.html :: change-phone-modal-container}"></div>
+    <header th:replace="~{common/header.html :: header}"></header>
+    <main>
+        <div class="spacer"></div>
+
+        <div sec:authorize="hasRole('ADMIN')" class="post-form-container hidden">
+            <form id="post-form" th:action="@{api/rooms}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="price">Ціна за ніч (₴)</label>
+                    <input type="number" name="price" placeholder="Наприклад: 2500" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Опис кімнати</label>
+                    <textarea class="input-description" name="description"
+                        placeholder="Опишіть особливості кімнати, зручності, вигляд з вікна тощо" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="type">Тип кімнати</label>
+                    <input type="text" name="type" placeholder="Наприклад: Люкс, Стандарт, Сімейна" required>
+                </div>
+                <div class="form-group">
+                    <label for="guestCapacity">Максимальна кількість гостей</label>
+                    <input type="number" name="guestCapacity" placeholder="Наприклад: 2" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Зручності</label>
+                    <div class="form-facility-container"></div>
+                </div>
+
+                <div class="form-group checkbox-group" style="margin: 15px 0;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #1e293b; font-weight: 600;">
+                        <input type="checkbox" name="hiddenFromClient" style="width: 18px; height: 18px; accent-color: #3b82f6;" checked>
+                        Приховати кімнату від клієнтів
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="images">Фотографії кімнати</label>
+                    <input class="file-input" type="file" name="post-images" accept="image/*" multiple>
+                </div>
+                <button type="submit">Додати кімнату</button>
+                <button type="button" class="form-closer">Скасувати</button>
+            </form>
+
+        </div>
+        <div sec:authorize="hasRole('ADMIN')" class="put-form-container hidden">
+            <form id="put-form" th:action="@{api/rooms}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="roomId" id="put-room-id">
+
+                <div class="form-group">
+                    <label for="put-price">Ціна за ніч (₴)</label>
+                    <input type="number" id="put-price" name="price" required>
+                </div>
+                <div class="form-group">
+                    <label for="put-description">Опис кімнати</label>
+                    <textarea class="input-description" id="put-description" name="description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="put-type">Тип кімнати</label>
+                    <input type="text" id="put-type" name="type" required>
+                </div>
+                <div class="form-group">
+                    <label for="put-capacity">Максимальна кількість гостей</label>
+                    <input type="number" id="put-capacity" name="guestCapacity" required>
+                </div>
+                <div class="form-group">
+                    <label>Зручності</label>
+                    <div class="form-facility-container" id="put-facilities"></div>
+                </div>
+
+                <div class="form-group checkbox-group" style="margin: 15px 0;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #1e293b; font-weight: 600;">
+                        <input type="checkbox" id="put-hidden" name="hiddenFromClient" style="width: 18px; height: 18px; accent-color: #3b82f6;">
+                        Приховати кімнату від клієнтів
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="put-images">Додати нові фотографії</label>
+                    <input class="file-input" type="file" name="post-images" accept="image/*" multiple>
+                </div>
+
+                <button type="submit">Зберегти зміни</button>
+                <button type="button" class="form-closer">Скасувати</button>
+            </form>
+        </div>
+
+        <div sec:authorize="hasRole('ADMIN')" class="delete-modal-window hidden">
+            <div class="delete-modal-content">
+                <h3>Ви точно хочете видалити цей номер?</h3>
+                <p>Ця дія є незворотною. Всі дані про номер будуть втрачені.</p>
+
+                <div class="delete-modal-actions">
+                    <button class="cancel-delete-btn">Cancel</button>
+                    <button class="confirm-delete-btn" data-service-id="">Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <button sec:authorize="hasRole('ADMIN')" class="fixed-add-room-btn" id="post-form-opener">Додати
+            кімнату</button>
+        <div class="cards-grid">
+            <th:block th:each="room : ${rooms}">
+                <div th:replace="~{booking/room-container.html :: roomCard(${room})}"></div>
+            </th:block>
+        </div>
+        <div id="infinite-scroll-status" class="infinite-scroll-status">
+            <div id="scroll-loader" class="scroll-loader hidden">
+                <div class="spinner"></div>
+                <span>Завантажуємо ще кімнати...</span>
+            </div>
+
+            <div id="scroll-error" class="scroll-error hidden">
+                <p>Не вдалося завантажити дані.</p>
+                <button id="scroll-retry-btn" class="retry-btn">Спробувати знову</button>
+            </div>
+
+            <div id="scroll-end" class="scroll-end hidden">
+                <p>Ви переглянули всі кімнати.</p>
+            </div>
+        </div>
+
+
+        
+    </main>
+    <footer th:replace="~{common/footer.html :: footer}"></footer>
+    <div class="lightbox-overlay hidden" id="lightbox">
+        <div class="lightbox-top-bar">
+            <div class="lightbox-menu-container">
+                <button class="lightbox-dots-btn" id="lightbox-dots" aria-label="Меню">⋮</button>
+                <div class="lightbox-dropdown hidden" id="lightbox-dropdown">
+                    <button sec:authorize="hasRole('ADMIN')" class="lightbox-delete-btn" id="lightbox-delete"
+                        th:data-url="@{/api/image}">Видалити фото</button>
+                </div>
+            </div>
+            <button class="lightbox-close-btn" id="lightbox-close" aria-label="Закрити">✖</button>
+        </div>
+
+        <div class="lightbox-content">
+            <button class="lightbox-nav lightbox-prev" id="lightbox-prev">&lt;</button>
+            <img src="" alt="Перегляд" class="lightbox-img" id="lightbox-img">
+            <button class="lightbox-nav lightbox-next" id="lightbox-next">&gt;</button>
+        </div>
+    </div>
+    <div th:replace="~{common/login-overlay.html :: login-overlay}"></div>
+
+    <script th:src="@{common/js/header.js}"></script>
+    <script th:src="@{booking/js/rooms.js}"></script>
+    <script th:src="@{booking/js/cart.js}"></script>
+
+    <script sec:authorize="! isAuthenticated()" th:src="@{common/js/login-overlay.js}"></script>
+
+</body>
+
+</html>

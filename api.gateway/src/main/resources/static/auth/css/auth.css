@@ -1,0 +1,134 @@
+ :root {
+     --accent: #2b7a78;
+     --muted: #6b7280;
+     --bg: #f7fafc;
+     --card: #ffffff;
+     --danger: #d9534f;
+ }
+
+ body {
+     margin: 0;
+     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+     background: var(--bg);
+     color: #111;
+ }
+
+ .auth-form-container {
+     position: relative;
+     max-width: 420px;
+     margin: 185px auto;
+     min-height: 400px;
+ }
+
+ .sign-in-form-container,
+ .sign-up-form-container {
+     position: absolute;
+     top: 0;
+     left: 0;
+     width: 100%;
+     padding: 28px 32px;
+     border-radius: 10px;
+     box-shadow: 0 4px 12px rgba(16, 24, 40, 0.04);
+     background: var(--card);
+     transition: opacity 0.5s ease, transform 0.5s ease;
+     opacity: 0;
+     transform: translateX(50px);
+     pointer-events: none;
+ }
+
+ .sign-in-form-container.active,
+ .sign-up-form-container.active {
+     opacity: 1;
+     transform: translateX(0);
+     pointer-events: auto;
+ }
+
+ .sign-in-form-container h2,
+ .sign-up-form-container h2 {
+     text-align: center;
+     margin-top: 0;
+     margin-bottom: 20px;
+     font-size: 24px;
+ }
+
+ form label {
+     display: block;
+     font-weight: 500;
+     margin-bottom: 10px;
+ }
+
+ form input[type="text"],
+ form input[type="password"],
+ form input[type="tel"]
+{
+     width: 100%;
+     padding: 12px;
+     border: 1px solid #e6eef0;
+     border-radius: 8px;
+     font-size: 15px;
+     margin-top: 4px;
+     box-sizing: border-box;
+ }
+
+ form input:focus {
+     outline: 2px solid var(--accent);
+     border-color: var(--accent);
+ }
+
+ .btn-submit {
+     background: var(--accent);
+     color: #fff;
+     padding: 12px 20px;
+     border-radius: 10px;
+     font-weight: 600;
+     border: none;
+     cursor: pointer;
+     width: 100%;
+     font-size: 16px;
+     margin-top: 15px;
+     transition: background 0.2s;
+ }
+
+ .btn-submit:hover {
+     background: #22605e;
+ }
+
+ p {
+     text-align: center;
+     margin-top: 15px;
+     color: var(--muted);
+ }
+
+ p span {
+     color: var(--accent);
+     cursor: pointer;
+     font-weight: 600;
+ }
+
+ p span:hover {
+     text-decoration: underline;
+ }
+
+ .error-span {
+     color: var(--danger);
+     text-align: center;
+ }
+
+ .btn-back {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid #e6eef0;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    margin-top: 10px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-back:hover {
+    background: #e6eef0;
+    color: #111;
+}

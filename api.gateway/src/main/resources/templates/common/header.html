@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+    <div th:fragment="change-phone-modal-container">
+        <div sec:authorize="isAuthenticated()" class="profile-options hidden">
+            <a id="change-phone-link" href="#">Змінити номер</a>
+            <hr style="margin: 8px 0; border: 0; border-top: 1px solid var(--border);">
+            <a id="logout-link" th:href="@{/logout}">Вийти</a>
+        </div>
+
+        <div id="change-phone-overlay" class="modal-overlay hidden" sec:authorize="isAuthenticated()">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h3>Зміна номера</h3>
+                    <button type="button" class="modal-close-btn" id="close-phone-modal">✖</button>
+                </div>
+                <div class="modal-content">
+                    <form id="change-phone-form">
+                        <div id="update-phone-step-1">
+                            <label style="font-size: 14px; font-weight: 500;">Новий номер телефону</label>
+                            <input type="tel" name="newPhone" placeholder="+380..." required>
+                            <span class="error-span" id="update-step1-error"></span>
+                            <button type="button" id="btn-request-update-otp" class="cta full-width"
+                                style="margin-top: 15px;">Отримати код</button>
+                        </div>
+
+                        <div id="update-phone-step-2" class="hidden">
+                            <p style="font-size: 14px; margin-top: 0;">Код відправлено на: <strong
+                                    id="update-display-phone"></strong></p>
+                            <input type="text" name="updateOtpCode" placeholder="Введіть 6-значний код" maxlength="6">
+                            <span class="error-span" id="update-step2-error"></span>
+                            <div class="success-message hidden" id="update-success-msg"></div>
+
+                            <button type="submit" class="cta full-width" style="margin-top: 15px;">Підтвердити</button>
+                            <button type="button" id="btn-resend-update-otp" class="btn-back full-width"
+                                style="margin-top: 10px;">Відправити ще раз</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <header th:fragment="header">
+        <nav>
+            <div class="brand">
+                <a th:href="@{/home}">
+                    <div class="logo">E</div>
+                    <div>
+                        <div>Edemium</div>
+                        <div>Цифровий сервіс бронювання</div>
+                    </div>
+                </a>
+            </div>
+            <a th:href="@{/home}">Головна</a>
+            <a th:href="@{/services}">Послуги</a>
+            <a th:href="@{/rooms}">Номери</a>
+            <a th:href="@{/spas}">Спа</a>
+            <a id="booking-page-link" th:href="@{/bookings}">
+                <span sec:authorize="!hasRole('ADMIN')">Мої бронювання</span>
+                <span sec:authorize="hasRole('ADMIN')">Бронювання</span>
+            </a>
+            <a th:href="@{/admin/resources-and-staff-management}" sec:authorize="hasRole('ADMIN')">Ресурси та
+                персонал</a>
+            <a th:href="@{/about-us}">Про нас</a>
+            <div class="booking-note-container" th:if="${isCheckoutPage == null || !isCheckoutPage}"
+                th:data-href="@{bookings-cart}">
+                <img class="image-booking-note" th:src="@{/common/images/booking-note.png}">
+            </div>
+            <div id="authorized" th:data-auth="${#authorization.expression('isAuthenticated()')}"></div>
+            <div>
+                <a id="sign-in-button" sec:authorize="isAnonymous()" th:if="${isAuthPage == null || ! isAuthPage }"
+                    th:href="@{/auth}">Увійти</a>
+                <img class="image-profile" sec:authorize="isAuthenticated()" th:src="@{/common/images/profile.png}"
+                    alt="">
+                <div sec:authorize="isAuthenticated()" class="profile-options hidden">
+                    <a id="logout-link" th:href="@{/logout}">Вийти</a>
+                </div>
+            </div>
+        </nav>
+
+        <th:block th:if="${isCheckoutPage == null || !isCheckoutPage}">
+            <div id="cart-drawer-overlay" class="cart-overlay hidden"></div>
+
+            <div id="cart-drawer" class="cart-drawer hidden">
+                <div class="cart-drawer-header">
+                    <h3>Ваш кошик</h3>
+                    <button id="close-cart-drawer" class="cart-close-btn" aria-label="Закрити">✖</button>
+                </div>
+
+                <div class="cart-drawer-content">
+                    <form id="cart-settings-form">
+                        <div id="cart-items-container" class="cart-items-container"></div>
+                    </form>
+
+                    <div id="empty-cart-message" class="empty-cart-message hidden">
+                        <div class="empty-cart-icon">🛒</div>
+                        <p>Ваш кошик порожній</p>
+                    </div>
+                </div>
+
+                <div class="cart-drawer-footer">
+                    <button type="button" id="proceed-to-checkout" class="full-width cart-button">
+                        Перейти до оформлення
+                    </button>
+                    <button type="button" id="browse-services-btn" class="full-width cart-button">
+                        Перейти до бронювання
+                    </button>
+                </div>
+            </div>
+        </th:block>
+
+        </div>
+    </header>
+
+</body>
+
+</html>

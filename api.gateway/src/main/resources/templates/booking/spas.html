@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Spa-процедури</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" th:href="@{/common/css/header.css}">
+    <link rel="stylesheet" th:href="@{/booking/css/spas.css}">
+    <link rel="stylesheet" th:href="@{/common/css/login-overlay.css}">
+    <link rel="stylesheet" th:href="@{/booking/css/cart.css}">
+    <link sec:authorize="hasRole('ADMIN')" rel="stylesheet" th:href="@{/booking/css/room-form.css}">
+    <link sec:authorize="hasRole('ADMIN')" rel="stylesheet" th:href="@{/booking/css/delete-modal-window.css}">
+    <link rel="stylesheet" th:href="@{/booking/css/lightbox-overlay.css}">
+    <link rel="stylesheet" th:href="@{/booking/css/scroll-loader.css}">
+
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+
+<body>
+    <div th:replace="~{common/header.html :: change-phone-modal-container}"></div>
+    <header th:replace="~{common/header.html :: header}"></header>
+    <main>
+        <div class="spacer"></div>
+
+        <div sec:authorize="hasRole('ADMIN')" class="post-form-container hidden">
+            <form id="post-form" th:action="@{/api/spas}" method="post" enctype="multipart/form-data">
+                <div class="form-scroll-wrapper">
+                    <h3>Додати Spa-процедуру</h3>
+                    <div class="form-group">
+                        <label for="name">Назва процедури</label>
+                        <input type="text" name="name" placeholder="Наприклад: Тайський масаж" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="type">Тип / Категорія</label>
+                        <input type="text" name="type" placeholder="Наприклад: Масаж, Догляд за обличчям" required>
+                    </div>
+                    <div class="form-group-row" >
+                        <div class="form-group" >
+                            <label for="price">Ціна (₴)</label>
+                            <input type="number" name="price" placeholder="2500" min="0" required>
+                        </div>
+                        <div class="form-group" >
+                            <label for="durationInMinutes">Тривалість (хв)</label>
+                            <input type="number" name="durationInMinutes" placeholder="60" min="1" required>
+                        </div>
+                        <div class="form-group" >
+                            <label for="guestCapacity">Гостей</label>
+                            <input type="number" name="guestCapacity" placeholder="1" min="1" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Загальний опис</label>
+                        <textarea class="input-description" name="description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="preparingInfoForClient">Інформація про підготовку</label>
+                        <textarea class="input-description" name="preparingInfoForClient"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Зручності (Facilities)</label>
+                        <div class="form-facility-container" data-list-name="facilities"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Протипоказання</label>
+                        <div class="form-facility-container" data-list-name="contraindications"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Застереження (Обмеження по віку тощо)</label>
+                        <div class="form-facility-container" data-list-name="cautionNotes"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Етапи процедури (Назва - Опис)</label>
+                        <div class="form-pair-container" data-list-name="spaStagesDescriptions"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Продукти догляду (Назва - Опис)</label>
+                        <div class="form-pair-container" data-list-name="careProductsDescriptions"></div>
+                    </div>
+
+                    <div class="form-group checkbox-group" style="margin: 15px 0;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #1e293b; font-weight: 600;">
+                            <input type="checkbox" name="hiddenFromClient" style="width: 18px; height: 18px; accent-color: #3b82f6;" checked>
+                            Приховати послугу від клієнтів
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="images">Фотографії</label>
+                        <input class="file-input" type="file" name="post-images" accept="image/*" multiple>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit">Додати spa-процедуру</button>
+                    <button type="button" class="form-closer">Скасувати</button>
+                </div>
+            </form>
+        </div>
+
+        <div sec:authorize="hasRole('ADMIN')" class="put-form-container hidden">
+            <form id="put-form" th:action="@{/api/spas}" method="post" enctype="multipart/form-data">
+                <div class="form-scroll-wrapper">
+                    <h3>Редагувати Spa-процедуру</h3>
+                    <input type="hidden" name="spaId" id="put-spa-id">
+
+                    <div class="form-group">
+                        <label for="put-name">Назва процедури</label>
+                        <input type="text" id="put-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="put-type">Тип / Категорія</label>
+                        <input type="text" id="put-type" name="type" required>
+                    </div>
+                    <div class="form-group-row" >
+                        <div class="form-group" >
+                            <label for="put-price">Ціна (₴)</label>
+                            <input type="number" id="put-price" name="price" required>
+                        </div>
+                        <div class="form-group" >
+                            <label for="put-duration">Тривалість (хв)</label>
+                            <input type="number" id="put-duration" name="durationInMinutes" required>
+                        </div>
+                        <div class="form-group" >
+                            <label for="put-capacity">Гостей</label>
+                            <input type="number" id="put-capacity" name="guestCapacity" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="put-description">Загальний опис</label>
+                        <textarea class="input-description" id="put-description" name="description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="put-preparing">Інформація про підготовку</label>
+                        <textarea class="input-description" id="put-preparing" name="preparingInfoForClient"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Зручності</label>
+                        <div class="form-facility-container" id="put-facilities" data-list-name="facilities"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Протипоказання</label>
+                        <div class="form-facility-container" id="put-contraindications" data-list-name="contraindications"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Застереження</label>
+                        <div class="form-facility-container" id="put-cautionNotes" data-list-name="cautionNotes"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Етапи процедури</label>
+                        <div class="form-pair-container" id="put-stages" data-list-name="spaStagesDescriptions"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Продукти догляду</label>
+                        <div class="form-pair-container" id="put-products" data-list-name="careProductsDescriptions"></div>
+                    </div>
+
+                    <div class="form-group checkbox-group" style="margin: 15px 0;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #1e293b; font-weight: 600;">
+                            <input type="checkbox" id="put-hidden" name="hiddenFromClient" style="width: 18px; height: 18px; accent-color: #3b82f6;">
+                            Приховати послугу від клієнтів
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="put-images">Додати нові фотографії</label>
+                        <input class="file-input" type="file" name="post-images" accept="image/*" multiple>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit">Зберегти зміни</button>
+                    <button type="button" class="form-closer">Скасувати</button>
+                </div>
+            </form>
+        </div>
+
+        <div sec:authorize="hasRole('ADMIN')" class="delete-modal-window hidden">
+            <div class="delete-modal-content">
+                <h3>Ви точно хочете видалити цю процедуру?</h3>
+                <p>Ця дія є незворотною. Всі дані будуть втрачені.</p>
+                <div class="delete-modal-actions">
+                    <button class="cancel-delete-btn">Скасувати</button>
+                    <button class="confirm-delete-btn" data-service-id="">Видалити</button>
+                </div>
+            </div>
+        </div>
+
+        <button sec:authorize="hasRole('ADMIN')" class="fixed-add-spa-btn" id="post-form-opener">Додати spa-процедуру</button>
+        
+        <div class="cards-grid">
+            <th:block th:each="spa : ${spas}">
+                <div th:replace="~{booking/spa-container.html :: spaCard(${spa})}"></div>
+            </th:block>
+        </div>
+
+        <div id="infinite-scroll-status" class="infinite-scroll-status">
+            <div id="scroll-loader" class="scroll-loader hidden">
+                <div class="spinner"></div>
+                <span>Завантажуємо ще процедури...</span>
+            </div>
+            <div id="scroll-error" class="scroll-error hidden">
+                <p>Не вдалося завантажити дані.</p>
+                <button id="scroll-retry-btn" class="retry-btn">Спробувати знову</button>
+            </div>
+            <div id="scroll-end" class="scroll-end hidden">
+                <p>Ви переглянули всі процедури.</p>
+            </div>
+        </div>
+
+    </main>
+    <footer th:replace="~{common/footer.html :: footer}"></footer>
+    
+    <div class="lightbox-overlay hidden" id="lightbox">
+        <div class="lightbox-top-bar">
+            <div class="lightbox-menu-container">
+                <button class="lightbox-dots-btn" id="lightbox-dots" aria-label="Меню">⋮</button>
+                <div class="lightbox-dropdown hidden" id="lightbox-dropdown">
+                    <button sec:authorize="hasRole('ADMIN')" class="lightbox-delete-btn" id="lightbox-delete"
+                        th:data-url="@{/api/image}">Видалити фото</button>
+                </div>
+            </div>
+            <button class="lightbox-close-btn" id="lightbox-close" aria-label="Закрити">✖</button>
+        </div>
+
+        <div class="lightbox-content">
+            <button class="lightbox-nav lightbox-prev" id="lightbox-prev">&lt;</button>
+            <img src="" alt="Перегляд" class="lightbox-img" id="lightbox-img">
+            <button class="lightbox-nav lightbox-next" id="lightbox-next">&gt;</button>
+        </div>
+    </div>
+    <div th:replace="~{common/login-overlay.html :: login-overlay}"></div>
+
+    <script th:src="@{/common/js/header.js}"></script>
+    <script th:src="@{/booking/js/spas.js}"></script>
+    <script th:src="@{/booking/js/cart.js}"></script>
+    <script sec:authorize="! isAuthenticated()" th:src="@{/common/js/login-overlay.js}"></script>
+
+</body>
+</html>

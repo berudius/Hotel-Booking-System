@@ -1,0 +1,111 @@
+<div th:fragment="spaCard(spa)" class="card spa-card" 
+    th:classappend="${spa.hiddenFromClient} ? 'spa-card-client-hidden' : ''"
+    th:data-service-id="${spa.id}"
+    th:data-preparing="${spa.preparingInfoForClient}"
+    th:data-hidden="${spa.hiddenFromClient}">
+    
+
+    <div th:if="${spa.hiddenFromClient}" class="admin-hidden-badge">
+        Приховано
+    </div>
+    
+    <div class="spa-image-container">
+        <img class="spa-slide-image" th:each="img : ${spa.imageRecords}" th:data-id="${img.id}" th:src="${img.url}"
+            th:alt="${img.position}">
+        <button class="slider-btn slider-btn-prev" th:if="${spa.imageRecords.size() > 1}"
+            aria-label="Previous image">&lt;</button>
+        <button class="slider-btn slider-btn-next" th:if="${spa.imageRecords.size() > 1}"
+            aria-label="Next image">&gt;</button>
+        <img class="spa-slide-image" th:if="${spa.imageRecords.size() == 0}" src="/common/images/placeholder.png" alt="">
+    </div>
+
+   
+
+    <div class="spa-card-content cursor-pointer">
+        <div class="spa-meta">
+            <span th:text="${spa.price} + ' ₴'"></span>
+            <span th:text="${spa.durationInMinutes} + ' хв'"></span>
+        </div>
+        <h3 th:text="${spa.name}"></h3>
+        <p class="type-badge" th:text="${spa.type}"></p>
+        <p th:text="${spa.description}"></p>
+
+        <button class="read-more-btn">Детальніше про процедуру</button>
+
+        <h4>Зручності:</h4>
+        <div class="facilities-list">
+            <span class="spa-facility-tag" th:each="facility : ${spa.facilities}" th:text="${facility}"></span>
+        </div>
+
+        <div class="user-actions-container">
+            <button class="cta btn-select full-width" th:data-service-id="${spa.id}" th:data-service-type="${spa.name}"
+                th:data-service-price="${spa.price}" th:data-service-capacity="${spa.guestCapacity}"
+                data-class-type="SPA" th:data-duration="${spa.durationInMinutes}">
+                Обрати
+            </button>
+
+            <div class="service-quantity-controls hidden" th:data-service-id="${spa.id}">
+                <button class="btn-qty-minus" th:data-service-id="${spa.id}">-</button>
+                <span class="service-qty-value" th:data-service-id="${spa.id}">1</span>
+                <button class="btn-qty-plus" th:data-service-id="${spa.id}" th:data-service-type="${spa.name}"
+                    th:data-service-price="${spa.price}" th:data-service-capacity="${spa.guestCapacity}"
+                    data-class-type="SPA" th:data-duration="${spa.durationInMinutes}">+</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="spa-info-overlay hidden" th:id="'spa-modal-' + ${spa.id}">
+        <div class="spa-info-modal">
+            <button class="spa-info-close">✖</button>
+            <h2 th:text="${spa.name}">Назва процедури</h2>
+            <p class="type-badge" th:text="${spa.type}">Тип</p>
+
+            <div class="spa-info-body">
+                <h3>Опис процедури</h3>
+                <p th:text="${spa.description}"></p>
+
+                <th:block th:if="${not #strings.isEmpty(spa.preparingInfoForClient)}">
+                    <h3>Підготовка до процедури</h3>
+                    <p th:text="${spa.preparingInfoForClient}"></p>
+                </th:block>
+
+                <th:block th:if="${not #lists.isEmpty(spa.contraindications)}">
+                    <h3>Протипоказання</h3>
+                    <ul class="modal-list">
+                        <li th:each="item : ${spa.contraindications}" th:text="${item}"></li>
+                    </ul>
+                </th:block>
+
+                <th:block th:if="${not #lists.isEmpty(spa.cautionNotes)}">
+                    <h3>Важливі застереження</h3>
+                    <ul class="modal-list">
+                        <li th:each="item : ${spa.cautionNotes}" th:text="${item}"></li>
+                    </ul>
+                </th:block>
+
+                <th:block th:if="${not #lists.isEmpty(spa.spaStagesDescriptions)}">
+                    <h3>Етапи процедури</h3>
+                    <ul class="modal-list">
+                        <li th:each="stage : ${spa.spaStagesDescriptions}">
+                            <strong th:text="${stage.name}"></strong>: <span th:text="${stage.description}"></span>
+                        </li>
+                    </ul>
+                </th:block>
+
+                <th:block th:if="${not #lists.isEmpty(spa.careProductsDescriptions)}">
+                    <h3>Продукти догляду</h3>
+                    <ul class="modal-list">
+                        <li th:each="prod : ${spa.careProductsDescriptions}">
+                            <strong th:text="${prod.name}"></strong>: <span th:text="${prod.description}"></span>
+                        </li>
+                    </ul>
+                </th:block>
+            </div>
+        </div>
+    </div>
+
+    <div sec:authorize="hasRole('ADMIN')" class="modal-buttons-container">
+        <button class="edit-modal-opener">Редагувати</button>
+        <button class="delete-modal-opener">Видалити</button>
+    </div>
+</div>
